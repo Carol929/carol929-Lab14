@@ -20,14 +20,31 @@ public class Client {
     }
 
     public void handshake() throws Exception{
-
+        out.println("12345");
+        out.flush();
     }
 
     public String request(String number) throws Exception{
-
+        out.println(number);
+        out.flush();
+        return in.readLine();
     }
 
     public void disconnect() throws Exception{
-
+        try { 
+            in.close(); 
+        } 
+        catch (Exception e) {
+        }
+        try { 
+            out.close(); 
+        } 
+        catch (Exception e) {
+        }
+        try { 
+            socket.close(); 
+        } 
+        catch (Exception e) {
+        }
     }
 }

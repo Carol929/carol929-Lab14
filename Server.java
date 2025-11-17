@@ -26,7 +26,7 @@ public class Server {
         this.serverSocket = new ServerSocket(port);
     }
 
-    public void serve(int expectedClients) throws Exception{
+    public void serve(int client) throws Exception{
 
     }
 
@@ -35,7 +35,11 @@ public class Server {
     }
 
     public void disconnect() throws Exception{
-
+        try { 
+            serverSocket.close();
+        } 
+        catch (Exception e) {
+        }
     }
 
     private void handleClient(Socket sock){
