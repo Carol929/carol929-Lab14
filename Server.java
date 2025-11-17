@@ -1,3 +1,4 @@
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -5,7 +6,7 @@ import java.util.ArrayList;
 private class ClientHandler implements Runnable {
 
     private ClientHandler(Socket socket){
-
+    
     }
 
     @Override
@@ -16,8 +17,13 @@ private class ClientHandler implements Runnable {
 
 public class Server {
 
-    public Server(int port) throws Exception{
+    private int port;
+    private ServerSocket serverSocket;
+    private ArrayList<LocalDateTime> connectedTimes = new ArrayList<>();
 
+    public Server(int port) throws Exception{
+        this.port = port;
+        this.serverSocket = new ServerSocket(port);
     }
 
     public void serve(int expectedClients) throws Exception{
