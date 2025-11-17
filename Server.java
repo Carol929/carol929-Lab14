@@ -7,26 +7,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 
-private class ClientHandler implements Runnable {
 
-    private ClientHandler(Socket socket){
-    
-    }
-
-    @Override
-    public void run(){
-
-    }
-}
 
 public class Server {
 
-    private int port;
     private ServerSocket serverSocket;
     private ArrayList<LocalDateTime> connectedTimes = new ArrayList<>();
 
     public Server(int port) throws Exception{
-        this.port = port;
         this.serverSocket = new ServerSocket(port);
     }
 
@@ -44,7 +32,8 @@ public class Server {
                 continue;
             }
             connectedTimes.add(LocalDateTime.now());
-           
+            ClientHandler handler = new ClientHandler(socket, in, out);
+            new Thread(handler).start();       
         }
     }
 
@@ -54,11 +43,62 @@ public class Server {
         return copy;
     }
 
-    public void disconnect() throws Exception{
+    public void disconnect(){
         try { 
             serverSocket.close();
         } 
         catch (Exception e) {
+        }
+    }
+
+    private class ClientHandler implements Runnable {
+
+        private Socket socket;
+        private BufferedReader in;
+        private PrintWriter out;
+
+              
+        public ClientHandler(Socket socket, BufferedReader in, PrintWriter out) {
+            this.socket = socket;
+            this.in = in;
+            this.out = out;
+        }
+      
+
+        @Override
+        public void run(){
+
+            try {
+                String read = in.readLine();
+                long num = Long.parseLong(read);
+                if (num > Integer.MAX_VALUE) {
+                    throw new Exception("too big");
+                }
+
+                int count = 0;
+                long lim = (long) Math.sqrt(num);
+                for (long i = 1; i <= lim; i++) {
+                    if (num % i == 0) {
+                        if (i == num / i) {
+                            count++;
+                        } else {
+                            count += 2;
+                        }
+                    }
+                }
+                String result = "The number " + num + " has " + count + " factors";
+                out.println(result);
+                out.flush();
+            } catch (Exception e) {
+                out.println("There was an exception on the server");
+                out.flush();
+            }
+
+            try {
+                socket.close();
+            }
+            catch (Exception e) {
+            }
         }
     }
 
